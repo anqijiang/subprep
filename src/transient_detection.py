@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.signal import find_peaks
 
 def convert_df_f(data, quantile=0.08, scale_window=500):
-    """ baseline correction"""
+    """ baseline correction using bottom quantile with a sliding window"""
 
     baseline = (
         pd.DataFrame(data)
@@ -63,3 +63,26 @@ def find_transients(fc3, rois, prominence_thresh=0.1, amplitude=0.12, interval=1
 
     return transients_mat[final_rois, :], rois[final_rois]
 
+
+def remove_nan_frames(data_fov):
+
+    nan_mask = np.isnan(data_fov).any(axis=0)
+    non_nan_data = data_fov[:, ~nan_mask]
+
+    return non_nan_data, nan_mask
+
+
+def restore_nan_frames(transients: np.ndarray, nan_mask: np.ndarray, data_shape: tuple):
+
+    mat = np.full(data_shape, np.nan)
+    mat[:, ~nan_mask] = transients
+    return mat
+
+
+def detect_transients(non_nan_data_fov, rois):
+
+    df_f = convert_df_f(non_nan_data_fov)
+    fc3 = denoise_sd(df_f)
+    transients, selected_rois = find_transients(fc3, rois, prominence_thresh=0.1)
+
+    return transients, selected_rois

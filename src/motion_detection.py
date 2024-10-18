@@ -23,6 +23,7 @@ def label_display(data, change_points):
         start = cp
 
     plt.show()
+    plt.pause(0.1)
 
 
 def replace_seg_with_nan(data, change_points, seg_to_replace):
