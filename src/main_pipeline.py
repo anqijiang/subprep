@@ -20,7 +20,7 @@ def smooth_data(raw: np.ndarray, order: int=1, window_size:int = 10):
 
     return s_reconstructed
 
-def detect_motion(data: np.ndarray, rois: np.ndarray) -> np.ndarray:
+def detect_motion(data: np.ndarray, rois: np.ndarray, jump=5) -> np.ndarray:
 
     pca = PCA(n_components=1)
 
@@ -36,7 +36,7 @@ def detect_motion(data: np.ndarray, rois: np.ndarray) -> np.ndarray:
     n_change_points = int(input("Enter the number of change points to detect (e.g. 4): "))
 
     # Step 2: Perform segmentation
-    change_points = segment_and_display(z1, n_change_points)
+    change_points = segment_and_display(z1, n_change_points, jump=jump)
 
     # Step 3: Ask the user if the result is good
     result_good = input("Is the segmentation result good? (yes/no): ").lower()
@@ -45,7 +45,7 @@ def detect_motion(data: np.ndarray, rois: np.ndarray) -> np.ndarray:
         # If not good, ask for a different number of change points and rerun
         n_change_points = int(input("Enter a different number of change points: "))
         print(f"{n_change_points} changed points")
-        change_points = segment_and_display(z1, n_change_points)
+        change_points = segment_and_display(z1, n_change_points, jump=jump)
         result_good = input("Is the segmentation result good? (yes/no): ").lower()
 
     # Step 4: If good, ask for chunks to replace with NaN

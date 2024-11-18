@@ -2,9 +2,9 @@ import numpy as np
 import ruptures as rpt
 import matplotlib.pyplot as plt
 
-def segment_and_display(data, n_change_points):
+def segment_and_display(data, n_change_points, jump=5):
     # Perform bottom-up segmentation with n change points
-    algo = rpt.Binseg(model="l2").fit(data)
+    algo = rpt.Binseg(model="l2", jump=jump).fit(data)
     change_points = algo.predict(n_bkps=n_change_points)
 
     label_display(data, change_points)
